@@ -1,0 +1,27 @@
+@model Ecommerce.Models.Product
+<div class="product-art art-@(Model.CategoryId % 4)" aria-hidden="true">
+<span class="art-coordinate">VD / @Model.ProductId.ToString("D3")</span>
+<svg viewBox="0 0 64 64" width="112" height="112" fill="none" shape-rendering="crispEdges">
+@if (Model.CategoryId == 2)
+{
+    <path d="M20 12h8v4h8v-4h8v4h8v8h4v8H44v22H20V32H8v-8h4v-8h8z" fill="currentColor"/>
+    <path d="M24 16h4v4h8v-4h4v8H24zM12 24h8v4h-8zm32 0h8v4h-8zM24 46h16v4H24z" fill="#f5f1e5"/>
+}
+else if (Model.CategoryId == 1)
+{
+    <path d="M20 8h24v4h8v8h4v32H40V32h8V20h-4v-4H20v4h-4v12h8v20H8V20h4v-8h8z" fill="currentColor"/>
+    <path d="M12 36h8v12h-8zm32 0h8v12h-8z" fill="#f5f1e5"/>
+}
+else if (Model.CategoryId == 4)
+{
+    <path d="M12 10h18v4h4v-4h18v42H34v4h-4v-4H12z" fill="currentColor"/>
+    <path d="M16 14h10v4h4v30h-4v-4H16zm22 0h10v30H38v4h-4V18h4z" fill="#f5f1e5"/>
+}
+else
+{
+    <path d="M12 16h40v8h8v28H4V24h8z" fill="currentColor"/>
+    <path d="M8 28h20v20H8zm28 0h20v20H36zM16 20h12v4H16zm20 0h12v4H36z" fill="#f5f1e5"/>
+    <path d="M28 16h8v36h-8z" fill="#b7c8db"/>
+}
+</svg><span class="art-spark">✦</span>
+</div>

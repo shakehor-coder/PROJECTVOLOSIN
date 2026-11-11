@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Ecommerce</title>
+    <title>@ViewData["Title"] — VOID DELIVERY</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Ecommerce.styles.css" asp-append-version="true" />
@@ -17,25 +17,27 @@
         area.Equals(areaName, StringComparison.OrdinalIgnoreCase)
             ? "nav-link active" : "nav-link";
 }
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
+    <a class="skip-link" href="#main-content">Перейти к содержимому</a>
+    <div class="void-status"><div class="container"><span><span class="status-star" aria-hidden="true">✦</span> YOUR NEXT FIND IS ON ITS WAY</span><span class="status-right">ИЗ ДРУГОГО МИРА — К ТВОЕЙ ДВЕРИ</span></div></div>
+    <nav aria-label="Основная навигация" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">ShopEase</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index"><span class="brand-mark" aria-hidden="true"></span>VOID DELIVERY<span class="brand-dot" aria-hidden="true">®</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Открыть меню">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="@NavClass("Home")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="@NavClass("Home")" asp-area="" asp-controller="Home" asp-action="Index">Главная</a>
                     </li>
                     <li class="nav-item">
-                        <a class="@NavClass("Catalog")" asp-area="" asp-controller="Catalog" asp-action="Index">Shop</a>
+                        <a class="@NavClass("Catalog")" asp-area="" asp-controller="Catalog" asp-action="Index">Каталог</a>
                     </li>
                     <li class="nav-item">
-                        <a class="@NavClass("Cart")" asp-area="" asp-controller="Cart" asp-action="Index">Cart</a>
+                        <a class="@NavClass("Cart")" asp-area="" asp-controller="Cart" asp-action="Index">Корзина</a>
                     </li>
                     <li class="nav-item">
-                        <a class="@NavClass("Orders")" asp-area="" asp-controller="Orders" asp-action="Index">My Orders</a>
+                        <a class="@NavClass("Orders")" asp-area="" asp-controller="Orders" asp-action="Index">Заказы</a>
                     </li>
                     @if (User.IsInRole("Admin"))
                     {
@@ -53,22 +55,21 @@
                     }
                 </ul>
                 <partial name="_LoginPartial" />
+                <button id="motion-toggle" class="motion-toggle" type="button" aria-pressed="false" title="Приостановить анимации" aria-label="Приостановить анимации"><span aria-hidden="true">Ⅱ</span></button>
             </div>
         </div>
     </nav>
 
-    <div class="container py-4">
-        <main role="main">
+    <div class="container py-4 site-content">
+        <main id="main-content" role="main">
             @RenderBody()
         </main>
     </div>
 
     @inject Ecommerce.Services.ApplicationRegistry AppRegistry
-    <div class="container text-muted small pb-3">@AppRegistry.Snapshot().DeliveryNote</div>
-    <footer class="bg-dark text-light py-3 mt-auto">
-        <div class="container text-center">
-            <small>&copy; 2026 ShopEase &mdash; <a class="text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></small>
-        </div>
+    <div class="delivery-strip container"><span aria-hidden="true">✦</span> @AppRegistry.Snapshot().DeliveryNote</div>
+    <footer class="void-footer mt-auto">
+        <div class="container footer-inner"><div><a class="footer-brand" asp-area="" asp-controller="Home" asp-action="Index">VOID DELIVERY</a><p>Немного магии. Всё остальное доставим.</p></div><div class="footer-meta"><span>© 2026 · FROM THE VOID, WITH LOVE</span><a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></div></div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

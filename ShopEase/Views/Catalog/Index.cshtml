@@ -3,7 +3,7 @@
     ViewData["Title"] = "Products";
 }
 
-<h2>Products</h2>
+<div class="section-heading catalog-heading"><div><span class="section-number">THE COLLECTION / ВСЕ НАХОДКИ</span><h1>Каталог</h1></div><p>Твоя следующая находка где-то здесь.</p></div>
 
 <!-- search and filter -->
 <form method="get" class="row mb-3">
@@ -41,7 +41,8 @@
     @foreach (var product in Model.Products)
     {
         <div class="col-md-3 mb-4">
-            <div class="card h-100">
+            <div class="card h-100 product-card">
+                <partial name="_ProductArt" model="product" />
                 <div class="card-body">
                     <h5 class="card-title">@product.Name</h5>
                     <p class="card-text text-muted">@product.Category?.Name</p>
