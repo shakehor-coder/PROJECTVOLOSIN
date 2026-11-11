@@ -1,3 +1,4 @@
+using System.Globalization;
 using Ecommerce.Data;
 using Ecommerce.Services;
 using Ecommerce.Models;
@@ -12,6 +13,9 @@ namespace Ecommerce
     {
         public static async Task Main(string[] args)
         {
+            // Demo prices are USD; keep currency formatting consistent on Linux hosts.
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.

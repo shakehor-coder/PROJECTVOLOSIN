@@ -83,3 +83,12 @@ dotnet run --project checks/SynchronizationChecks/SynchronizationChecks.csproj -
 dotnet run --project checks/HookRegistryChecks/HookRegistryChecks.csproj -c Release
 node checks/http-smoke.cjs
 ```
+
+## Тестовый сайт
+
+https://projectvolosin.onrender.com/
+
+Администратор: `admin@example.test`; пароль находится в переменной
+`SeedAdmin__Password` в [настройках Render](https://dashboard.render.com/web/srv-dbq5s0bl550s739lmgtg).
+Обычного покупателя можно зарегистрировать через Register.
+Данные тестового сервиса временные и могут сбрасываться после рестарта.
