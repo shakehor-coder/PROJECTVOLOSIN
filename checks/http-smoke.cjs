@@ -1,4 +1,4 @@
-// Requires Playwright and Chromium; launches a disposable local SQLite instance.
+// Node.js 22+ HTTP integration checks against a disposable local SQLite instance.
 const { spawn } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -61,18 +61,26 @@ function token(html){const tag=html.match(/<input[^>]*name="__RequestVerificatio
  check(status.state==='Completed' && status.exitCode===0 && status.output.includes('.NET'),'external process finishes and captures output');
  const customer=new Client();
  page=await customer.get('/Identity/Account/Register');
- page=await customer.post('/Identity/Account/Register',{'Input.FullName':'Test Buyer','Input.Email':'buyer@example.test','Input.Password':password,'Input.ConfirmPassword':password,__RequestVerificationToken:token(page.text)});
- check(!page.url.includes('/Register'),'customer registration');
- page=await customer.get('/Admin/Registry');check(page.url.includes('AccessDenied'),'customer cannot access admin registry');
+ check(page.status===404,'public registration disabled');
+ check((await customer.post('/Identity/Account/Register',{})).status===404,'registration POST disabled');
+ const photos=JSON.parse((await customer.get('/images/product-images.json')).text);
+ check(photos.length===54 && new Set(photos.map(p=>p.sku)).size===54,'all 54 seeded products have unique photos');
+ check((await customer.get('/Home/ImageCredits')).status===200,'photo attribution page renders');
+ const sample=await fetch(base+photos[0].url);
+ check(sample.ok && sample.headers.get('content-type').includes('image/webp'),'product photograph served locally');
+ page=await customer.get('/Admin/Registry');check(page.url.includes('/Login'),'guest cannot access admin registry');
  page=await customer.get('/Catalog?sort=price_asc');
  check(page.status===200 && page.text.includes('card-title'),'SQLite price sorting');
+ check(page.text.includes('class="product-photo"'),'catalog renders product photographs');
  const prices=[...page.text.matchAll(/class="card-text fw-bold">([^<]+)/g)].map(m=>Number(m[1].replace(/&#x[0-9A-Fa-f]+;|&#[0-9]+;|[^0-9.,]/g,'').replaceAll(',','')));
  check(prices.length>1 && prices.every((p,i)=>i===0 || p>=prices[i-1]),'prices sorted numerically');
  const add=page.text.match(/href="([^"]*\/Cart\/Add[^"]*)"/)[1].replaceAll('&amp;','&');
  page=await customer.get(add);check(page.url.includes('/Cart'),'cart adds product');
  page=await customer.get('/Checkout');
  page=await customer.post('/Checkout',{Country:'Test Country',City:'Test City',Street:'Test Street 1',Zip:'12345',__RequestVerificationToken:token(page.text)});
- check(page.url.includes('/Orders/Details/') && page.text.includes('Test Street 1'),'checkout persists order and shipping address');
+ check(page.url.includes('/Orders/Details/') && page.text.includes('Test Street 1'),'guest checkout persists order and shipping address');
+ const otherGuest=new Client();
+ check((await otherGuest.get(new URL(page.url).pathname)).status===404,'guest cannot read another session order');
  page=await customer.get('/Orders');check(page.text.includes('ORD-'),'customer order history');
  page=await customer.get('/Cart');check(!page.text.includes('name="qty"'),'cart cleared after checkout');
  await customer.get(add);page=await customer.get('/Checkout');

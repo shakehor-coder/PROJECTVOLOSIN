@@ -47,6 +47,7 @@ namespace Ecommerce
             builder.Services.AddControllersWithViews();
             builder.Services.AddSingleton<ProcessMonitor>();
             builder.Services.AddSingleton<ApplicationRegistry>();
+            builder.Services.AddSingleton<ProductImageCatalog>();
             builder.Services.AddSingleton<InventoryCalculationGate>();
             builder.Services.AddSingleton<InventoryAnalytics>();
             builder.Services.AddHostedService<InventoryReportHook>();
@@ -57,6 +58,8 @@ namespace Ecommerce
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
+
+            builder.Services.AddScoped<GuestCustomerService>();
 
             //register repositories
             builder.Services.AddScoped(typeof(IEntityRepository<,>), typeof(EntityRepository<,>));
@@ -98,6 +101,19 @@ namespace Ecommerce
             app.UseAuthentication();
 
             app.UseAuthorization();
+            // Public self-registration is not part of the assignments. Admin login is retained.
+            app.Use(async (context, next) =>
+            {
+                var path = context.Request.Path.Value?.TrimEnd('/');
+                if (string.Equals(path, "/Identity/Account/Register", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(path, "/Identity/Account/RegisterConfirmation", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+                    return;
+                }
+                await next();
+            });
+
 
             app.MapControllerRoute(
                 name: "areas",

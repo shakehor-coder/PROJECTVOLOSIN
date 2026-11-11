@@ -1,30 +1,28 @@
 using Ecommerce.Models;
+using Ecommerce.Services;
 using Ecommerce.Repositories;
 using Ecommerce.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.Controllers
 {
-    [Authorize]
     public class OrdersController : Controller
     {
         private readonly IOrderRepository _orderRepo;
-        private readonly UserManager<AppUser> _userManager;
+        private readonly GuestCustomerService _customers;
 
-        public OrdersController(IOrderRepository orderRepo, UserManager<AppUser> userManager)
+        public OrdersController(IOrderRepository orderRepo, GuestCustomerService customers)
         {
             _orderRepo = orderRepo;
-            _userManager = userManager;
+            _customers = customers;
         }
 
         //my orders list
         public IActionResult Index()
         {
-            var userId = _userManager.GetUserId(User);
+            var userId = _customers.CurrentId(HttpContext);
             if (userId == null)
-                return RedirectToAction("Index", "Home");
+                return View(new List<Order>());
 
             var orders = _orderRepo.GetByUserId(userId);
             return View(orders);
@@ -34,7 +32,7 @@ namespace Ecommerce.Controllers
         public IActionResult Details(int id)
         {
             var order = _orderRepo.GetById(id);
-            if (order == null)
+            if (order == null || order.UserId != _customers.CurrentId(HttpContext))
                 return NotFound();
 
             var vm = new OrderDetailsVM

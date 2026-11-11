@@ -1,5 +1,11 @@
 @model Ecommerce.Models.Product
-<div class="product-art art-@(Model.CategoryId % 4)" aria-hidden="true">
+@inject Ecommerce.Services.ProductImageCatalog ProductImages
+@{ var photo = ProductImages.Find(Model.SKU); }
+<div class="product-art art-@(Model.CategoryId % 4) @(photo != null ? "has-product-photo" : "")" aria-hidden="true">
+@if (photo != null)
+{
+    <img class="product-photo" src="@photo.Url" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.hidden=true;this.parentElement.classList.add('photo-unavailable')" />
+}
 <span class="art-coordinate">VD / @Model.ProductId.ToString("D3")</span>
 <svg viewBox="0 0 64 64" width="112" height="112" fill="none" shape-rendering="crispEdges">
 @if (Model.CategoryId == 2)

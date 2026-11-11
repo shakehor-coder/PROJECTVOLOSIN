@@ -25,6 +25,8 @@ namespace Ecommerce.Controllers
             return View();
         }
 
+        public IActionResult ImageCredits() => View();
+
         public IActionResult Privacy()
         {
             return View();

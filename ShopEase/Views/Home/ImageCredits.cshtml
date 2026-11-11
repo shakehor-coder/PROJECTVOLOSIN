@@ -1,0 +1,12 @@
+@inject Ecommerce.Services.ProductImageCatalog ProductImages
+@{ ViewData["Title"] = "Источники фотографий"; }
+<h1>Источники фотографий</h1>
+<p>Фотографии иллюстрируют демонстрационный каталог. Модели, цвет и комплектация могут отличаться от описания товара. Изображения авторов не изменяются; при показе в карточке они вписываются в рамку.</p>
+<div class="table-responsive"><table class="table"><thead><tr><th>SKU</th><th>Изображение и автор</th><th>Лицензия и источник</th></tr></thead><tbody>
+@foreach (var photo in ProductImages.All)
+{
+<tr><td>@photo.Sku</td><td>@photo.Title<br />@photo.Author</td><td>@photo.License<br /><a href="@photo.Source" target="_blank" rel="noopener noreferrer">Страница источника</a>
+@if (!string.IsNullOrWhiteSpace(photo.LicenseUrl)) {<br /><a href="@photo.LicenseUrl" target="_blank" rel="noopener noreferrer">Условия использования</a>}
+</td></tr>
+}
+</tbody></table></div>

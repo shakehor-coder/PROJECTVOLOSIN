@@ -1,10 +1,18 @@
 @model Ecommerce.ViewModels.ProductDetailsVM
+@inject Ecommerce.Services.ProductImageCatalog ProductImages
+@{ var photo = ProductImages.Find(Model.Product.SKU); }
 @{
     ViewData["Title"] = Model.Product.Name;
 }
 
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-5 mb-4"><div class="detail-product-image"><partial name="_ProductArt" model="Model.Product" /></div>
+@if (photo != null)
+{
+    <p class="image-credit">Иллюстративное фото; модель и комплектация могут отличаться.<br />@photo.Author · @photo.License · <a href="@photo.Source" target="_blank" rel="noopener noreferrer">Источник</a></p>
+}
+</div>
+<div class="col-md-7">
         <h2>@Model.Product.Name</h2>
         <p class="text-muted">Category: @Model.CategoryName</p>
         <p>SKU: @Model.Product.SKU</p>

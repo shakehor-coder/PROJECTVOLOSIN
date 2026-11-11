@@ -1,42 +1,40 @@
 using Ecommerce.Data;
+using Ecommerce.Services;
 using Ecommerce.Helpers;
 using Ecommerce.Models;
 using Ecommerce.Repositories;
 using Ecommerce.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.Controllers
 {
-    [Authorize]
     public class CheckoutController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly GuestCustomerService _customers;
         private readonly IAddressRepository _addressRepo;
         private readonly IProductRepository _productRepo;
-        private readonly UserManager<AppUser> _userManager;
 
         public CheckoutController(
             ApplicationDbContext context,
             IAddressRepository addressRepo,
             IProductRepository productRepo,
-            UserManager<AppUser> userManager)
+            GuestCustomerService customers)
         {
             _context = context;
+            _customers = customers;
             _addressRepo = addressRepo;
             _productRepo = productRepo;
-            _userManager = userManager;
         }
 
         //show checkout page
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var cart = CartHelper.GetCart(HttpContext.Session);
             if (!cart.Any())
                 return RedirectToAction("Index", "Cart");
 
-            var userId = _userManager.GetUserId(User);
+            var userId = await _customers.GetOrCreateIdAsync(HttpContext);
             var addresses = userId != null ? _addressRepo.GetByUserId(userId) : new List<Address>();
 
             var vm = new CheckoutVM
@@ -52,9 +50,9 @@ namespace Ecommerce.Controllers
         //process checkout - atomic transaction
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Index(CheckoutVM vm)
+        public async Task<IActionResult> Index(CheckoutVM vm)
         {
-            var userId = _userManager.GetUserId(User);
+            var userId = await _customers.GetOrCreateIdAsync(HttpContext);
             if (userId == null)
                 return RedirectToAction("Index", "Home");
 
