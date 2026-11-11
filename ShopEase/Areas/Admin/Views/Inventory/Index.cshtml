@@ -1,0 +1,37 @@
+@model Ecommerce.Services.InventoryReport
+@{
+    ViewData["Title"] = "Остатки товаров";
+}
+<div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-4">
+    <div>
+        <div class="text-uppercase text-muted small mb-2">ShopEase · Администрирование</div>
+        <h1 class="fw-bold">Остатки товаров</h1>
+        <p class="text-muted mb-0">Количество и стоимость запасов по категориям активных товаров.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-primary">Обновить отчёт</a>
+</div>
+@if (Model.Categories.Count == 0)
+{
+    <p class="alert alert-info">Нет активных товаров для расчёта отчёта.</p>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4"><div class="border rounded-3 bg-light p-4"><div class="text-muted">Товаров</div><div class="h2 mb-0">@Model.Categories.Sum(c => c.ProductCount)</div></div></div>
+        <div class="col-sm-4"><div class="border rounded-3 bg-light p-4"><div class="text-muted">Единиц на складе</div><div class="h2 mb-0">@Model.Categories.Sum(c => c.Units)</div></div></div>
+        <div class="col-sm-4"><div class="border rounded-3 bg-light p-4"><div class="text-muted">Нет в наличии</div><div class="h2 mb-0">@Model.Categories.Sum(c => c.OutOfStockCount)</div></div></div>
+    </div>
+    <div class="table-responsive border rounded-3">
+        <table class="table table-striped align-middle mb-0">
+            <caption class="px-3">Стоимость рассчитана по текущим ценам каталога.</caption>
+            <thead class="table-dark"><tr><th scope="col">Категория</th><th scope="col" class="text-end">Товаров</th><th scope="col" class="text-end">Нет в наличии</th><th scope="col" class="text-end">Единиц</th><th scope="col" class="text-end">Стоимость запасов</th></tr></thead>
+            <tbody>
+            @foreach (var category in Model.Categories)
+            {
+                <tr><th scope="row">@category.CategoryName</th><td class="text-end">@category.ProductCount</td><td class="text-end">@category.OutOfStockCount</td><td class="text-end">@category.Units</td><td class="text-end">@category.StockValue.ToString("N2")</td></tr>
+            }
+            </tbody>
+            <tfoot><tr class="fw-bold"><th scope="row">Всего</th><td class="text-end">@Model.Categories.Sum(c => c.ProductCount)</td><td class="text-end">@Model.Categories.Sum(c => c.OutOfStockCount)</td><td class="text-end">@Model.Categories.Sum(c => c.Units)</td><td class="text-end">@Model.Categories.Sum(c => c.StockValue).ToString("N2")</td></tr></tfoot>
+        </table>
+    </div>
+}

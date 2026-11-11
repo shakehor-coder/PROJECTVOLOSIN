@@ -28,6 +28,7 @@ namespace Ecommerce
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddSingleton<ProcessMonitor>();
+            builder.Services.AddSingleton<InventoryAnalytics>();
 
             //redirect to login when not authenticated
             builder.Services.ConfigureApplicationCookie(options =>

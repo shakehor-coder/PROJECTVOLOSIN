@@ -44,3 +44,13 @@ dotnet run --project checks/ProcessChecks/ProcessChecks.csproj -c Release
 
 Полная проверка магазина в браузере требует доступного SQL Server.
 Размещение сайта и подключение внешней базы выполняются отдельно.
+
+## Выполненное задание 3
+
+Добавлен отчёт `/Admin/Inventory` с асинхронным чтением базы и параллельным
+расчётом по категориям на большом каталоге. Описание механизмов, решаемых
+проблем и ограничений: [tasks/03_ASYNC_AND_THREADS.md](tasks/03_ASYNC_AND_THREADS.md).
+
+```sh
+dotnet run --project checks/InventoryChecks/InventoryChecks.csproj -c Release
+```
