@@ -31,6 +31,7 @@ namespace Ecommerce
             builder.Services.AddSingleton<ApplicationRegistry>();
             builder.Services.AddSingleton<InventoryCalculationGate>();
             builder.Services.AddSingleton<InventoryAnalytics>();
+            builder.Services.AddHostedService<InventoryReportHook>();
 
             //redirect to login when not authenticated
             builder.Services.ConfigureApplicationCookie(options =>

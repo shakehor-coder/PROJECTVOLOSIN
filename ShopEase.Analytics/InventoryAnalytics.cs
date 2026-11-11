@@ -7,18 +7,28 @@ public sealed record InventoryCategory(int CategoryId, string CategoryName, int 
 public sealed record InventoryReport(IReadOnlyList<InventoryCategory> Categories,
     bool UsedParallelCalculation);
 
+public sealed class InventoryReportEventArgs(int productCount) : EventArgs
+{
+    public int ProductCount { get; } = productCount;
+}
+
 public sealed class InventoryAnalytics(InventoryCalculationGate calculationGate)
 {
+    public event EventHandler<InventoryReportEventArgs>? ReportCompleted;
+
     public const int ParallelThreshold = 1000;
     public const int MaxWorkers = 4;
 
-    public Task<InventoryReport> AnalyzeAsync(IReadOnlyList<InventoryItem> items,
+    public async Task<InventoryReport> AnalyzeAsync(IReadOnlyList<InventoryItem> items,
         CancellationToken cancellationToken = default)
     {
         // Copy before scheduling: callers cannot mutate the collection during computation.
         var snapshot = items.ToArray();
-        return calculationGate.ExecuteAsync(
+        var report = await calculationGate.ExecuteAsync(
             token => Task.Run(() => Calculate(snapshot, token), token), cancellationToken);
+        // Notify subscribers only after a successful calculation and outside the semaphore.
+        ReportCompleted?.Invoke(this, new InventoryReportEventArgs(snapshot.Length));
+        return report;
     }
 
     private static InventoryReport Calculate(InventoryItem[] items, CancellationToken token)
