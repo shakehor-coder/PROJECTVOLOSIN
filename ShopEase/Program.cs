@@ -28,6 +28,7 @@ namespace Ecommerce
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddSingleton<ProcessMonitor>();
+            builder.Services.AddSingleton<ApplicationRegistry>();
             builder.Services.AddSingleton<InventoryCalculationGate>();
             builder.Services.AddSingleton<InventoryAnalytics>();
 

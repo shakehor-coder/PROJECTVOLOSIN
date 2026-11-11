@@ -47,6 +47,7 @@
                             <li><a class="dropdown-item" asp-area="Admin" asp-controller="Orders" asp-action="Index">Orders</a></li>
                             <li><a class="dropdown-item" asp-area="Admin" asp-controller="Processes" asp-action="Index">Процессы</a></li>
                             <li><a class="dropdown-item" asp-area="Admin" asp-controller="Inventory" asp-action="Index">Остатки товаров</a></li>
+                            <li><a class="dropdown-item" asp-area="Admin" asp-controller="Registry" asp-action="Index">Реестр</a></li>
                         </ul>
                     </li>
                     }
@@ -62,6 +63,8 @@
         </main>
     </div>
 
+    @inject Ecommerce.Services.ApplicationRegistry AppRegistry
+    <div class="container text-muted small pb-3">@AppRegistry.Snapshot().DeliveryNote</div>
     <footer class="bg-dark text-light py-3 mt-auto">
         <div class="container text-center">
             <small>&copy; 2026 ShopEase &mdash; <a class="text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></small>

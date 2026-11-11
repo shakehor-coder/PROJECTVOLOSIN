@@ -1,0 +1,13 @@
+@model Ecommerce.Services.RegistrySnapshot
+@{ ViewData["Title"] = "Реестр приложения"; }
+<div class="mb-4"><div class="text-uppercase text-muted small">ShopEase · Администрирование</div><h1 class="fw-bold mt-2">Реестр приложения</h1><p class="text-muted">Общие настройки и события текущего экземпляра магазина.</p></div>
+@if (TempData["RegistryError"] is string error) { <div class="alert alert-danger">@error</div> }
+<div class="row g-4">
+<div class="col-md-6"><form asp-action="Update" method="post" class="border rounded-3 p-4">
+<label for="deliveryNote" class="form-label fw-bold">Примечание о доставке</label>
+<input id="deliveryNote" name="deliveryNote" value="@Model.DeliveryNote" class="form-control mb-3" maxlength="200" required />
+<button class="btn btn-primary">Сохранить</button>
+</form></div>
+<div class="col-md-6"><dl class="border rounded-3 bg-light p-4"><dt>Отчётов сформировано</dt><dd>@Model.CompletedReports</dd><dt>Последний отчёт UTC</dt><dd>@(Model.LastReportAt?.ToString("u") ?? "Ещё нет")</dd><dt>Товаров в последнем отчёте</dt><dd>@Model.LastProductCount</dd></dl></div>
+</div>
+<p class="text-muted mt-4">Реестр хранится в памяти процесса. После перезапуска значения сбрасываются.</p>
