@@ -1,0 +1,65 @@
+@model Ecommerce.Services.ProcessSnapshot
+@{
+    ViewData["Title"] = "Процессы";
+    var active = Model.State is "Running" or "Stopping";
+}
+<div class="mb-4">
+    <div class="text-uppercase text-muted small mb-2">ShopEase · Администрирование</div>
+    <h1 class="fw-bold">Диагностика окружения</h1>
+    <p class="text-muted">Запустите отдельный процесс для получения сведений о .NET на сервере.</p>
+</div>
+@if (TempData["ProcessMessage"] is string message)
+{
+    <div class="alert alert-info" role="alert">@message</div>
+}
+<div class="border rounded-3 bg-light p-4 mb-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+        <div><span class="text-muted">Команда</span><br /><code>dotnet --info</code></div>
+        <div class="d-flex gap-2">
+            <form asp-action="Start" method="post">
+                <button id="start-process" class="btn btn-primary" disabled="@active">Запустить диагностику</button>
+            </form>
+            <form asp-action="Stop" method="post">
+                <button id="stop-process" class="btn btn-outline-danger" disabled="@(!active)">Остановить</button>
+            </form>
+        </div>
+    </div>
+    <dl class="row mt-4 mb-0">
+        <dt class="col-sm-3">Состояние</dt><dd class="col-sm-9" id="process-state" role="status">@Model.State</dd>
+        <dt class="col-sm-3">PID</dt><dd class="col-sm-9" id="process-pid">@(Model.Pid?.ToString() ?? "—")</dd>
+        <dt class="col-sm-3">Начало UTC</dt><dd class="col-sm-9" id="process-start">@(Model.StartedAt?.ToString("u") ?? "—")</dd>
+        <dt class="col-sm-3">Завершение UTC</dt><dd class="col-sm-9" id="process-end">@(Model.FinishedAt?.ToString("u") ?? "—")</dd>
+        <dt class="col-sm-3">Код завершения</dt><dd class="col-sm-9" id="process-exit">@(Model.ExitCode?.ToString() ?? "—")</dd>
+    </dl>
+</div>
+<h2 class="h5">Вывод процесса</h2>
+<pre id="process-output" class="bg-dark text-light rounded-3 p-4" style="min-height:240px;max-height:480px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere">@Model.Output</pre>
+<p class="text-muted small">Отображаются последние 16 000 символов. Сведения обновляются автоматически. Диагностика может завершиться за доли секунды.</p>
+<p id="process-network" class="text-danger small" role="status"></p>
+@section Scripts {
+<script>
+(() => {
+    const labels = {Idle:'Не запускался', Running:'Выполняется', Stopping:'Останавливается', Completed:'Завершён успешно', Failed:'Ошибка', Stopped:'Остановлен'};
+    async function refresh() {
+        try {
+            const response = await fetch('@Url.Action("Status")', { cache:'no-store' });
+            if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) throw new Error();
+            const s = await response.json();
+            const set = (id, value) => document.getElementById(id).textContent = value ?? '—';
+            set('process-state', labels[s.state] ?? s.state);
+            set('process-pid', s.pid);
+            set('process-start', s.startedAt ? new Date(s.startedAt).toISOString() : null);
+            set('process-end', s.finishedAt ? new Date(s.finishedAt).toISOString() : null);
+            set('process-exit', s.exitCode);
+            set('process-output', s.output);
+            const active = s.state === 'Running' || s.state === 'Stopping';
+            document.getElementById('start-process').disabled = active;
+            document.getElementById('stop-process').disabled = !active;
+            set('process-network', '');
+        } catch { document.getElementById('process-network').textContent = 'Не удалось обновить состояние. Проверьте соединение и вход в аккаунт.'; }
+        setTimeout(refresh, 1000);
+    }
+    refresh();
+})();
+</script>
+}

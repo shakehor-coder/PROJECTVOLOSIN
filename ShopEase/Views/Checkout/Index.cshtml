@@ -1,0 +1,88 @@
+@model Ecommerce.ViewModels.CheckoutVM
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h2>Checkout</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="row">
+    <!-- address selection -->
+    <div class="col-md-6">
+        <h4>Shipping Address</h4>
+        <form asp-action="Index" method="post">
+
+            @if (Model.Addresses.Any())
+            {
+                <div class="mb-3">
+                    <label class="form-label">Select existing address:</label>
+                    @foreach (var addr in Model.Addresses)
+                    {
+                        <div class="form-check">
+                            <input type="radio" name="SelectedAddressId" value="@addr.AddressId"
+                                   class="form-check-input" id="addr_@addr.AddressId" />
+                            <label class="form-check-label" for="addr_@addr.AddressId">
+                                @addr.Street, @addr.City, @addr.Country @addr.Zip
+                            </label>
+                        </div>
+                    }
+                </div>
+                <hr />
+                <p>Or enter a new address:</p>
+            }
+
+            <div class="mb-3">
+                <label class="form-label">Country</label>
+                <input type="text" name="Country" class="form-control" value="@Model.Country" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">City</label>
+                <input type="text" name="City" class="form-control" value="@Model.City" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Street</label>
+                <input type="text" name="Street" class="form-control" value="@Model.Street" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Zip</label>
+                <input type="text" name="Zip" class="form-control" value="@Model.Zip" />
+            </div>
+
+            <button type="submit" class="btn btn-success">Place Order</button>
+        </form>
+    </div>
+
+    <!-- order summary -->
+    <div class="col-md-6">
+        <h4>Order Summary</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.CartItems)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.LineTotal.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2" class="text-end fw-bold">Total:</td>
+                    <td class="fw-bold">@Model.CartTotal.ToString("C")</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

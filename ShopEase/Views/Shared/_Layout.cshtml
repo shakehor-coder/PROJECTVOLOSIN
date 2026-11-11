@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Ecommerce</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Ecommerce.styles.css" asp-append-version="true" />
+</head>
+<body>
+@{
+    var ctrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var area = ViewContext.RouteData.Values["area"]?.ToString() ?? "";
+    string NavClass(string controller, string areaName = "") =>
+        ctrl.Equals(controller, StringComparison.OrdinalIgnoreCase) &&
+        area.Equals(areaName, StringComparison.OrdinalIgnoreCase)
+            ? "nav-link active" : "nav-link";
+}
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">ShopEase</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="@NavClass("Home")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="@NavClass("Catalog")" asp-area="" asp-controller="Catalog" asp-action="Index">Shop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="@NavClass("Cart")" asp-area="" asp-controller="Cart" asp-action="Index">Cart</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="@NavClass("Orders")" asp-area="" asp-controller="Orders" asp-action="Index">My Orders</a>
+                    </li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                    <li class="nav-item dropdown">
+                        <a class="@(area == "Admin" ? "nav-link dropdown-toggle active" : "nav-link dropdown-toggle")" href="#" role="button" data-bs-toggle="dropdown">Admin</a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item" asp-area="Admin" asp-controller="Categories" asp-action="Index">Categories</a></li>
+                            <li><a class="dropdown-item" asp-area="Admin" asp-controller="Products" asp-action="Index">Products</a></li>
+                            <li><a class="dropdown-item" asp-area="Admin" asp-controller="Orders" asp-action="Index">Orders</a></li>
+                            <li><a class="dropdown-item" asp-area="Admin" asp-controller="Processes" asp-action="Index">Процессы</a></li>
+                        </ul>
+                    </li>
+                    }
+                </ul>
+                <partial name="_LoginPartial" />
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="bg-dark text-light py-3 mt-auto">
+        <div class="container text-center">
+            <small>&copy; 2026 ShopEase &mdash; <a class="text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></small>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

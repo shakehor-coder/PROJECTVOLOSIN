@@ -1,0 +1,61 @@
+@model Ecommerce.ViewModels.OrderDetailsVM
+@using static Ecommerce.Models.Order
+@{
+    ViewData["Title"] = "Order " + Model.OrderNumber;
+}
+
+<h2>Order @Model.OrderNumber</h2>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <p><strong>Date:</strong> @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
+        <p><strong>Status:</strong> <span class="badge bg-info">@Model.Status</span></p>
+        <p><strong>Shipping:</strong> @Model.ShippingAddress</p>
+    </div>
+    <div class="col-md-6">
+        <!-- update status form -->
+        <h5>Update Status</h5>
+        <form asp-action="UpdateStatus" method="post">
+            <input type="hidden" name="id" value="@Model.OrderId" />
+            <div class="input-group">
+                <select name="status" class="form-select">
+                    @foreach (var s in Enum.GetValues<OrderStatus>())
+                    {
+                        <option value="@s" selected="@(s == Model.Status)">@s</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.UnitPrice.ToString("C")</td>
+                <td>@item.Quantity</td>
+                <td>@item.LineTotal.ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-end fw-bold">Total:</td>
+            <td class="fw-bold">@Model.TotalAmount.ToString("C")</td>
+        </tr>
+    </tfoot>
+</table>
+
+<a asp-action="Index" class="btn btn-outline-secondary">Back to Orders</a>

@@ -1,0 +1,31 @@
+@model Ecommerce.ViewModels.ProductDetailsVM
+@{
+    ViewData["Title"] = Model.Product.Name;
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <h2>@Model.Product.Name</h2>
+        <p class="text-muted">Category: @Model.CategoryName</p>
+        <p>SKU: @Model.Product.SKU</p>
+        <h4 class="text-primary">@Model.Product.Price.ToString("C")</h4>
+        <p>
+            @if (Model.Product.StockQuantity > 0)
+            {
+                <span class="badge bg-success">In Stock (@Model.Product.StockQuantity)</span>
+            }
+            else
+            {
+                <span class="badge bg-danger">Out of Stock</span>
+            }
+        </p>
+
+        @if (Model.Product.StockQuantity > 0)
+        {
+            <a asp-controller="Cart" asp-action="Add" asp-route-productId="@Model.Product.ProductId"
+               class="btn btn-success">Add to Cart</a>
+        }
+
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to Products</a>
+    </div>
+</div>

@@ -1,0 +1,77 @@
+@model Ecommerce.ViewModels.ProductListVM
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h2>Products</h2>
+
+<!-- search and filter -->
+<form method="get" class="row mb-3">
+    <div class="col-md-3">
+        <select name="categoryId" class="form-select">
+            <option value="">All Categories</option>
+            @foreach (var cat in Model.Categories)
+            {
+                <option value="@cat.CategoryId" selected="@(Model.CategoryId == cat.CategoryId)">@cat.Name</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <input type="text" name="q" value="@Model.SearchQuery" class="form-control" placeholder="Search..." />
+    </div>
+    <div class="col-md-3">
+        <select name="sort" class="form-select">
+            <option value="">Newest</option>
+            <option value="price_asc" selected="@(Model.Sort == "price_asc")">Price: Low to High</option>
+            <option value="price_desc" selected="@(Model.Sort == "price_desc")">Price: High to Low</option>
+            <option value="name" selected="@(Model.Sort == "name")">Name</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
+</form>
+
+<!-- product grid -->
+<div class="row">
+    @if (!Model.Products.Any())
+    {
+        <p>No products found.</p>
+    }
+    @foreach (var product in Model.Products)
+    {
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">@product.Name</h5>
+                    <p class="card-text text-muted">@product.Category?.Name</p>
+                    <p class="card-text fw-bold">@product.Price.ToString("C")</p>
+                </div>
+                <div class="card-footer">
+                    <a asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-sm btn-outline-primary">Details</a>
+                    <a asp-controller="Cart" asp-action="Add" asp-route-productId="@product.ProductId" class="btn btn-sm btn-success">Add to Cart</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- pagination -->
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-categoryId="@Model.CategoryId"
+                       asp-route-q="@Model.SearchQuery"
+                       asp-route-sort="@Model.Sort"
+                       asp-route-page="@i">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

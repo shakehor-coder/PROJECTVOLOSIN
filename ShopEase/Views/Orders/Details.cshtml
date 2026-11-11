@@ -1,0 +1,44 @@
+@model Ecommerce.ViewModels.OrderDetailsVM
+@{
+    ViewData["Title"] = "Order " + Model.OrderNumber;
+}
+
+<h2>Order @Model.OrderNumber</h2>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <p><strong>Date:</strong> @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
+        <p><strong>Status:</strong> <span class="badge bg-info">@Model.Status</span></p>
+        <p><strong>Shipping Address:</strong> @Model.ShippingAddress</p>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.UnitPrice.ToString("C")</td>
+                <td>@item.Quantity</td>
+                <td>@item.LineTotal.ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-end fw-bold">Total:</td>
+            <td class="fw-bold">@Model.TotalAmount.ToString("C")</td>
+        </tr>
+    </tfoot>
+</table>
+
+<a asp-action="Index" class="btn btn-outline-secondary">Back to Orders</a>
