@@ -44,8 +44,8 @@
 
 | Файл | Изменение |
 | --- | --- |
-| `ShopEase/Services/InventoryCalculationGate.cs` | Общий семафор и ExecuteAsync с освобождением в finally |
-| `ShopEase/Services/InventoryAnalytics.cs` | Вход в вычислительную часть через общий gate |
+| `ShopEase.Analytics/InventoryCalculationGate.cs` | Общий семафор и ExecuteAsync с освобождением в finally |
+| `ShopEase.Analytics/InventoryAnalytics.cs` | Вход в вычислительную часть через общий gate |
 | `ShopEase/Program.cs` | Регистрация gate как singleton, одного на приложение |
 | `checks/InventoryChecks` | Использование нового конструктора и проверка расчётов прежнего задания |
 | `checks/SynchronizationChecks` | Проверки взаимного исключения, отмены и исключений |

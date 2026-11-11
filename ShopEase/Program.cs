@@ -3,6 +3,7 @@ using Ecommerce.Services;
 using Ecommerce.Models;
 using Ecommerce.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce
@@ -14,10 +15,23 @@ namespace Ecommerce
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-           
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+            var provider = builder.Configuration["Database:Provider"] ?? "SqlServer";
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            if (provider.Equals("Sqlite", StringComparison.OrdinalIgnoreCase))
+            {
+                var dataDirectory = Path.Combine(builder.Environment.ContentRootPath, "App_Data");
+                Directory.CreateDirectory(dataDirectory);
+                if (string.IsNullOrWhiteSpace(connectionString))
+                    connectionString = "Data Source=" + Path.Combine(dataDirectory, "shop.db");
+                builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connectionString));
+            }
+            else if (provider.Equals("SqlServer", StringComparison.OrdinalIgnoreCase))
+            {
+                if (string.IsNullOrWhiteSpace(connectionString))
+                    throw new InvalidOperationException("Configure ConnectionStrings:DefaultConnection or select Database:Provider=Sqlite.");
+                builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+            }
+            else throw new InvalidOperationException("Unsupported Database:Provider.");
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
@@ -46,6 +60,10 @@ namespace Ecommerce
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+
+            var keyDirectory = Path.Combine(builder.Environment.ContentRootPath, "App_Data", "keys");
+            Directory.CreateDirectory(keyDirectory);
+            builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(keyDirectory));
 
             //session for cart
             builder.Services.AddDistributedMemoryCache();
@@ -85,10 +103,14 @@ namespace Ecommerce
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
+            app.MapGet("/health", () => Results.Ok(new { status = "ready" }));
 
             // Seed roles
             using (var scope = app.Services.CreateScope())
             {
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                if (context.Database.IsSqlite()) await context.Database.EnsureCreatedAsync();
+                else await context.Database.MigrateAsync();
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
                 string[] roles = { "Admin", "Customer" };
@@ -128,7 +150,6 @@ namespace Ecommerce
                 }
 
                 // Seed sample data
-                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 DbInitializer.Seed(context);
             }
 

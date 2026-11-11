@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36930.0 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce", "Ecommerce.csproj", "{B8FDFF83-704C-4B86-B7C2-1ED29837A22F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShopEase.Analytics", "..\ShopEase.Analytics\ShopEase.Analytics.csproj", "{56387487-A120-4199-9695-359B6D2A54DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{B8FDFF83-704C-4B86-B7C2-1ED29837A22F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8FDFF83-704C-4B86-B7C2-1ED29837A22F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8FDFF83-704C-4B86-B7C2-1ED29837A22F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56387487-A120-4199-9695-359B6D2A54DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56387487-A120-4199-9695-359B6D2A54DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56387487-A120-4199-9695-359B6D2A54DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56387487-A120-4199-9695-359B6D2A54DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,7 +6,6 @@ namespace Ecommerce.Data
     {
         public static void Seed(ApplicationDbContext context)
         {
-            context.Database.EnsureCreated();
 
             if (!context.Categories.Any())
             {

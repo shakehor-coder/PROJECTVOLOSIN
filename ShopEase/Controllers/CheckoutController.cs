@@ -62,6 +62,17 @@ namespace Ecommerce.Controllers
             if (!cart.Any())
                 return RedirectToAction("Index", "Cart");
 
+            if (vm.SelectedAddressId.HasValue &&
+                !_context.Addresses.Any(a => a.AddressId == vm.SelectedAddressId.Value && a.UserId == userId))
+                return BadRequest("Invalid shipping address.");
+            if (!vm.SelectedAddressId.HasValue &&
+                (string.IsNullOrWhiteSpace(vm.Country) || string.IsNullOrWhiteSpace(vm.City) ||
+                 string.IsNullOrWhiteSpace(vm.Street) || string.IsNullOrWhiteSpace(vm.Zip)))
+            {
+                TempData["Error"] = "Please complete the shipping address.";
+                return RedirectToAction("Index");
+            }
+
             //use transaction for atomicity
             using var transaction = _context.Database.BeginTransaction();
 

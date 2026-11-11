@@ -7,3 +7,7 @@
 .env
 .env.*
 **/appsettings.Local.json
+**/App_Data/
+**/*.db
+**/*.db-shm
+**/*.db-wal

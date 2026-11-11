@@ -94,6 +94,19 @@ namespace Ecommerce.Data
                 .Property(oi => oi.LineTotal)
                 .HasColumnType("decimal(18,2)");
 
+            // SQLite stores monetary values as integer cents, preserving exact two-decimal values
+            // and enabling provider-side price sorting without decimal ORDER BY limitations.
+            if (Database.IsSqlite())
+            {
+                var cents = new Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<decimal, long>(
+                    value => checked((long)decimal.Round(value * 100m, 0, MidpointRounding.AwayFromZero)),
+                    value => value / 100m);
+                builder.Entity<Product>().Property(p => p.Price).HasConversion(cents).HasColumnType("INTEGER");
+                builder.Entity<Order>().Property(p => p.TotalAmount).HasConversion(cents).HasColumnType("INTEGER");
+                builder.Entity<OrderItem>().Property(p => p.UnitPrice).HasConversion(cents).HasColumnType("INTEGER");
+                builder.Entity<OrderItem>().Property(p => p.LineTotal).HasConversion(cents).HasColumnType("INTEGER");
+            }
+
             //address -> user
             builder.Entity<Address>()
                 .HasOne(a => a.User)

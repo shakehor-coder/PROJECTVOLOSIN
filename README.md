@@ -64,3 +64,22 @@ dotnet run --project checks/InventoryChecks/InventoryChecks.csproj -c Release
 ```sh
 dotnet run --project checks/SynchronizationChecks/SynchronizationChecks.csproj -c Release
 ```
+
+## Новые задания
+
+- [DLL](tasks/05_DLL.md): расчёт отчёта вынесен в `ShopEase.Analytics.dll`.
+- [Реестр](tasks/06_REGISTRY.md): общие настройки и состояние в `/Admin/Registry`.
+- [Хук](tasks/07_HOOK.md): событие успешного отчёта обновляет реестр.
+- [Параллельность и память](tasks/08_PARALLELISM_AND_MEMORY.md): описание с примерами; два одинаковых задания объединены.
+- [Размещение и результаты проверок](tasks/09_HOSTING_AND_TESTS.md): SQLite, Docker и Render.
+
+Для демонстрации без SQL Server задайте `Database__Provider=Sqlite`.
+Создание базы выполняется перед стартом сайта. Для обычного режима SQL Server
+по-прежнему нужна строка подключения; миграции теперь применяются при старте.
+
+Проверки новых механизмов:
+
+```sh
+dotnet run --project checks/HookRegistryChecks/HookRegistryChecks.csproj -c Release
+node checks/http-smoke.cjs
+```

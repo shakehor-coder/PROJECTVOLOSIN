@@ -50,7 +50,7 @@
 | Файл | Назначение |
 | --- | --- |
 | `ShopEase/Areas/Admin/Controllers/InventoryController.cs` | Асинхронная загрузка данных и формирование страницы |
-| `ShopEase/Services/InventoryAnalytics.cs` | Неизменяемые DTO, расчёт отчёта и параллельный цикл |
+| `ShopEase.Analytics/InventoryAnalytics.cs` | Неизменяемые DTO, расчёт отчёта и параллельный цикл |
 | `ShopEase/Areas/Admin/Views/Inventory/Index.cshtml` | Таблица и итоговые показатели |
 | `ShopEase/Program.cs` | Регистрация сервиса без изменяемого общего состояния |
 | `ShopEase/Views/Shared/_Layout.cshtml` | Ссылка в меню администратора |

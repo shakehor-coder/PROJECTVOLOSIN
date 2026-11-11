@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: projectvolosin
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: Database__Provider
+        value: Sqlite
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_FORWARDEDHEADERS_ENABLED
+        value: "true"
+      - key: SeedAdmin__Email
+        value: admin@example.test
+      - key: SeedAdmin__Password
+        generateValue: true
