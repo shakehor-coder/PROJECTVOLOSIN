@@ -5,7 +5,7 @@ void Check(bool ok, string message)
     if (!ok) throw new Exception("FAIL: " + message);
     Console.WriteLine("PASS: " + message);
 }
-var analytics = new InventoryAnalytics();
+var analytics = new InventoryAnalytics(new InventoryCalculationGate());
 var empty = await analytics.AnalyzeAsync(Array.Empty<InventoryItem>());
 Check(empty.Categories.Count == 0 && !empty.UsedParallelCalculation, "empty catalogue");
 var small = new[] {new InventoryItem(1, "A", 10.25m, 3), new InventoryItem(1, "A", 20m, 0), new InventoryItem(2, "B", 5m, 4)};

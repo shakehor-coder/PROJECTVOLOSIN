@@ -7,7 +7,7 @@ public sealed record InventoryCategory(int CategoryId, string CategoryName, int 
 public sealed record InventoryReport(IReadOnlyList<InventoryCategory> Categories,
     bool UsedParallelCalculation);
 
-public sealed class InventoryAnalytics
+public sealed class InventoryAnalytics(InventoryCalculationGate calculationGate)
 {
     public const int ParallelThreshold = 1000;
     public const int MaxWorkers = 4;
@@ -17,7 +17,8 @@ public sealed class InventoryAnalytics
     {
         // Copy before scheduling: callers cannot mutate the collection during computation.
         var snapshot = items.ToArray();
-        return Task.Run(() => Calculate(snapshot, cancellationToken), cancellationToken);
+        return calculationGate.ExecuteAsync(
+            token => Task.Run(() => Calculate(snapshot, token), token), cancellationToken);
     }
 
     private static InventoryReport Calculate(InventoryItem[] items, CancellationToken token)

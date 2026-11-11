@@ -54,3 +54,13 @@ dotnet run --project checks/ProcessChecks/ProcessChecks.csproj -c Release
 ```sh
 dotnet run --project checks/InventoryChecks/InventoryChecks.csproj -c Release
 ```
+
+## Выполненное задание 4
+
+В вычислительную часть отчёта внедрён общий `SemaphoreSlim(1, 1)`:
+один расчёт одновременно, асинхронное ожидание и освобождение при ошибке
+или отмене. Объяснение: [tasks/04_SYNCHRONIZATION.md](tasks/04_SYNCHRONIZATION.md).
+
+```sh
+dotnet run --project checks/SynchronizationChecks/SynchronizationChecks.csproj -c Release
+```
