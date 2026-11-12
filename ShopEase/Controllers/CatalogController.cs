@@ -19,6 +19,7 @@ namespace Ecommerce.Controllers
         //browse products + filter by category + search + pagination
         public IActionResult Index(int? categoryId, string? q, string? sort, int page = 1)
         {
+            page = Math.Max(1, page);
             var products = _productRepo.GetFiltered(categoryId, q, sort, page, PageSize);
             var totalCount = _productRepo.GetFilteredCount(categoryId, q);
 
